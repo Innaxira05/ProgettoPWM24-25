@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastFood — Ordina Online</title>
+  <meta name="description" content="Ordina i tuoi piatti preferiti online con FastFood. Consegna a domicilio o ritiro in ristorante." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================
+       NAVBAR
+       Le 4 voci corrispondono ai macro-scenari del progetto:
+         1. Profilo      → profilo.html
+         2. Ristorante   → ristorante.html
+         3. Ordini       → ordini.html
+         4. Consegne     → consegne.html
+       ============================================ -->
+  <header class="navbar" id="navbar" role="banner">
+
+    <!-- Logo -->
+    <a class="navbar__logo" href="index.html" aria-label="FastFood Home">
+      <div class="navbar__logo-icon" aria-hidden="true">🍔</div>
+      <span class="navbar__logo-wordmark">Fast<span>Food</span></span>
+    </a>
+
+    <!-- Nav links — un link per macro-scenario -->
+    <nav aria-label="Navigazione principale">
+      <ul class="navbar__links">
+        <li>
+          <!-- Macro-scenario 1: Gestione del profilo utente -->
+          <a href="profilo.html">Profilo</a>
+        </li>
+        <li>
+          <!-- Macro-scenario 2: Gestione del ristorante -->
+          <a href="ristorante.html">Ristorante</a>
+        </li>
+        <li>
+          <!-- Macro-scenario 3: Gestione degli ordini -->
+          <a href="ordini.html">Ordini</a>
+        </li>
+        <li>
+          <!-- Macro-scenario 4: Gestione delle consegne -->
+          <a href="consegne.html">Consegne</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Actions: accesso e registrazione -->
+    <div class="navbar__actions">
+      <a href="login.html" class="btn btn--ghost" aria-label="Accedi al tuo account">Accedi</a>
+      <a href="login.html?mode=register" class="btn btn--accent">Registrati</a>
+      <!-- Hamburger (mobile) -->
+      <button class="navbar__hamburger" id="hamburger"
+              aria-label="Apri menu" aria-expanded="false" aria-controls="mobile-drawer">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+  </header>
+
+  <!-- ============================================
+       MOBILE DRAWER — stesso ordine dei 4 macro-scenari
+       ============================================ -->
+  <nav class="mobile-drawer" id="mobile-drawer" aria-label="Menu mobile" aria-hidden="true">
+    <a href="profilo.html">Profilo</a>
+    <a href="ristorante.html">Ristorante</a>
+    <a href="ordini.html">Ordini</a>
+    <a href="consegne.html">Consegne</a>
+    <a href="login.html">Accedi</a>
+    <a href="login.html?mode=register" style="color: var(--clr-accent);">Registrati →</a>
+  </nav>
+
+
+  <main>
+
+    <!-- ============================================
+         HERO
+         ============================================ -->
+    <section class="hero" aria-label="Sezione principale">
+      <div class="container hero__inner">
+
+        <!-- Testo -->
+        <div class="hero__text">
+          <div class="hero__label">
+            <span class="tag">Ordina ora · Consegna rapida</span>
+          </div>
+
+          <h1 class="hero__title">
+            Il cibo<br>
+            che <em>ami</em><br>
+            <span class="strike">aspetta</span>
+          </h1>
+
+          <p class="hero__subtitle">
+            Scegli tra centinaia di piatti dai migliori ristoranti della tua città.
+            Ritiro in sede o consegna a domicilio — tu decidi.
+          </p>
+
+          <div class="hero__cta">
+            <!-- CTA principali puntano ai macro-scenari più rilevanti per l'utente -->
+            <a href="ordini.html" class="btn btn--accent btn--lg">Sfoglia il menu</a>
+            <a href="ristorante.html" class="btn btn--ghost btn--lg">Trova ristoranti</a>
+          </div>
+        </div>
+
+        <!-- Visual -->
+        <div class="hero__visual" aria-hidden="true">
+          <div class="hero__plate">🍔</div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         SEZIONE 4 MACRO-SCENARI
+         Panoramica cliccabile dei 4 ambiti funzionali.
+         Ogni card è un <a> che porta alla pagina dedicata.
+         ============================================ -->
+    <section class="features" id="macro-scenari" aria-labelledby="features-title">
+      <div class="container">
+        <div class="features__header">
+          <h2 class="section__title" id="features-title">Cosa<br><span>puoi fare</span></h2>
+          <p style="color: var(--clr-muted); font-size: 0.9rem; max-width: 280px; font-weight: 300;">
+            FastFood è organizzato in 4 aree principali.
+          </p>
+        </div>
+
+        <div class="features__grid" role="list">
+
+          <!-- Macro-scenario 1: Gestione del profilo utente -->
+          <a href="profilo.html" class="feature-card feature-card--link" role="listitem"
+             aria-label="Vai alla gestione del profilo utente">
+            <div class="feature-card__icon" aria-hidden="true">👤</div>
+            <h3 class="feature-card__title">Profilo Utente</h3>
+            <p class="feature-card__desc">
+              Registrati scegliendo la tipologia (cliente, ristoratore, corriere),
+              modifica i dati personali o rimuovi il profilo.
+            </p>
+            <span class="feature-card__cta">Gestisci il profilo →</span>
+          </a>
+
+          <!-- Macro-scenario 2: Gestione del ristorante -->
+          <a href="ristorante.html" class="feature-card feature-card--link" role="listitem"
+             aria-label="Vai alla gestione del ristorante">
+            <div class="feature-card__icon" aria-hidden="true">🍽️</div>
+            <h3 class="feature-card__title">Ristorante</h3>
+            <p class="feature-card__desc">
+              Gestisci il menu, aggiungi o modifica i piatti, imposta orari
+              e visualizza le statistiche del locale.
+            </p>
+            <span class="feature-card__cta">Gestisci il ristorante →</span>
+          </a>
+
+          <!-- Macro-scenario 3: Gestione degli ordini -->
+          <a href="ordini.html" class="feature-card feature-card--link" role="listitem"
+             aria-label="Vai alla gestione degli ordini">
+            <div class="feature-card__icon" aria-hidden="true">🛒</div>
+            <h3 class="feature-card__title">Ordini</h3>
+            <p class="feature-card__desc">
+              Sfoglia il catalogo, aggiungi piatti al carrello e finalizza
+              l'ordine scegliendo tra ritiro in sede e consegna a domicilio.
+            </p>
+            <span class="feature-card__cta">Vai agli ordini →</span>
+          </a>
+
+          <!-- Macro-scenario 4: Gestione delle consegne -->
+          <a href="consegne.html" class="feature-card feature-card--link" role="listitem"
+             aria-label="Vai alla gestione delle consegne">
+            <div class="feature-card__icon" aria-hidden="true">🚀</div>
+            <h3 class="feature-card__title">Consegne</h3>
+            <p class="feature-card__desc">
+              Traccia lo stato della consegna in tempo reale. I corrieri
+              possono accettare e aggiornare le consegne assegnate.
+            </p>
+            <span class="feature-card__cta">Gestisci le consegne →</span>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         PIATTI PIÙ ORDINATI
+         ============================================ -->
+    <section class="popular" id="menu" aria-labelledby="popular-title">
+      <div class="container">
+        <div class="popular__header">
+          <h2 class="section__title" id="popular-title">Più <span>ordinati</span></h2>
+          <a href="ordini.html" class="btn btn--ghost">Vedi tutti →</a>
+        </div>
+
+        <div class="popular__grid">
+
+          <article class="dish-card">
+            <div class="dish-card__img" aria-hidden="true">🍔</div>
+            <div class="dish-card__body">
+              <p class="dish-card__type">Burger</p>
+              <h3 class="dish-card__name">Classic Smash</h3>
+              <p style="font-size:0.8rem; color: var(--clr-muted); font-weight:300;">
+                Manzo angus, cheddar, cipolla caramellata
+              </p>
+              <div class="dish-card__footer">
+                <span class="dish-card__price">€ 8.90</span>
+                <button class="dish-card__add" aria-label="Aggiungi Classic Smash al carrello">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="dish-card">
+            <div class="dish-card__img" aria-hidden="true">🌮</div>
+            <div class="dish-card__body">
+              <p class="dish-card__type">Mexican</p>
+              <h3 class="dish-card__name">Taco Crunch</h3>
+              <p style="font-size:0.8rem; color: var(--clr-muted); font-weight:300;">
+                Pollo, avocado, salsa verde, coriandolo
+              </p>
+              <div class="dish-card__footer">
+                <span class="dish-card__price">€ 6.50</span>
+                <button class="dish-card__add" aria-label="Aggiungi Taco Crunch al carrello">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="dish-card">
+            <div class="dish-card__img" aria-hidden="true">🍕</div>
+            <div class="dish-card__body">
+              <p class="dish-card__type">Pizza</p>
+              <h3 class="dish-card__name">Margherita DOC</h3>
+              <p style="font-size:0.8rem; color: var(--clr-muted); font-weight:300;">
+                Fior di latte, pomodoro San Marzano, basilico
+              </p>
+              <div class="dish-card__footer">
+                <span class="dish-card__price">€ 9.00</span>
+                <button class="dish-card__add" aria-label="Aggiungi Margherita DOC al carrello">+</button>
+              </div>
+            </div>
+          </article>
+
+          <article class="dish-card">
+            <div class="dish-card__img" aria-hidden="true">🥗</div>
+            <div class="dish-card__body">
+              <p class="dish-card__type">Vegan</p>
+              <h3 class="dish-card__name">Power Bowl</h3>
+              <p style="font-size:0.8rem; color: var(--clr-muted); font-weight:300;">
+                Quinoa, ceci, spinaci, tahini, melograno
+              </p>
+              <div class="dish-card__footer">
+                <span class="dish-card__price">€ 10.50</span>
+                <button class="dish-card__add" aria-label="Aggiungi Power Bowl al carrello">+</button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============================================
+         CTA BANNER — ristoratori
+         ============================================ -->
+    <section class="cta-banner" aria-label="Diventa ristoratore">
+      <div class="container">
+        <div class="cta-banner__inner">
+          <div class="cta-banner__text">
+            <p class="cta-banner__eyebrow">Sei un ristoratore?</p>
+            <h2>Porta il tuo<br>menu online</h2>
+          </div>
+          <!-- Porta alla pagina ristorante (macro-scenario 2) -->
+          <a href="ristorante.html" class="btn btn--dark btn--lg">
+            Gestisci il tuo ristorante →
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__inner">
+      <span class="footer__copy">© 2025 FastFood · Progetto PWM UniMI</span>
+      <ul class="footer__links" aria-label="Link footer">
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/termini">Termini</a></li>
+        <li><a href="/contatti">Contatti</a></li>
+      </ul>
+    </div>
+  </footer>
+
+
+  <!-- ============================================
+       SCRIPT — hamburger menu toggle
+       ============================================ -->
+  <script>
+    const hamburger = document.getElementById('hamburger');
+    const drawer    = document.getElementById('mobile-drawer');
+    const navbar    = document.getElementById('navbar');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = drawer.classList.toggle('open');
+      navbar.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+      drawer.setAttribute('aria-hidden', !isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    // Chiude il drawer al click su un link
+    drawer.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        drawer.classList.remove('open');
+        navbar.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      });
+    });
+  </script>
+
+</body>
+</html>

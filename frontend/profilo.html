@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastFood — Il mio Profilo</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="profilo.css" />
+</head>
+<body>
+
+  <!-- NAVBAR Semplificata per schermate secondarie-->
+  <header class="navbar" id="navbar" role="banner">
+    
+    <a class="navbar__logo" href="index.html" aria-label="FastFood Home">
+      <div class="navbar__logo-icon" aria-hidden="true">🍔</div>
+      <span class="navbar__logo-wordmark">Fast<span>Food</span></span>
+    </a>
+
+    <div class="navbar__actions">
+      <a href="index.html" class="btn btn--ghost">Torna alla Home</a>
+    </div>
+
+  </header>
+
+  <!-- ============================================
+       CONTENUTO PRINCIPALE
+       Visibile solo dopo il controllo di autenticazione
+       ============================================ -->
+  <main class="profilo-main" id="profilo-main" style="display:none;">
+    <div class="container">
+
+      <!-- Header pagina -->
+      <div class="profilo-header">
+        <div class="profilo-avatar" id="profilo-avatar" aria-hidden="true">👤</div>
+        <div>
+          <!-- Nome e ruolo vengono popolati da JS leggendo il JWT/localStorage -->
+          <h1 class="profilo-nome" id="profilo-nome">—</h1>
+          <span class="profilo-badge" id="profilo-badge">—</span>
+        </div>
+      </div>
+
+      <!-- ── TAB NAVIGATION ── -->
+      <div class="profilo-tabs" role="tablist" aria-label="Sezioni profilo">
+        <button class="profilo-tab active" role="tab" aria-selected="true"
+                aria-controls="tab-dati" id="tab-btn-dati">
+          Dati personali
+        </button>
+        <button class="profilo-tab" role="tab" aria-selected="false"
+                aria-controls="tab-modifica" id="tab-btn-modifica">
+          Modifica profilo
+        </button>
+        <button class="profilo-tab profilo-tab--danger" role="tab" aria-selected="false"
+                aria-controls="tab-elimina" id="tab-btn-elimina">
+          Elimina account
+        </button>
+      </div>
+
+
+      <!-- ══════════════════════════════════════════
+           TAB 1 — DATI PERSONALI (sola lettura)
+           Mostra i dati salvati nel profilo.
+           ══════════════════════════════════════════ -->
+      <section class="profilo-panel active" id="tab-dati"
+               role="tabpanel" aria-labelledby="tab-btn-dati">
+
+        <div class="info-grid" id="info-grid">
+          <!-- Le righe vengono generate da JS in base al ruolo -->
+          <!-- Struttura di ogni riga:
+               <div class="info-row">
+                 <span class="info-label">Etichetta</span>
+                 <span class="info-value">Valore</span>
+               </div>
+          -->
+        </div>
+
+      </section>
+
+
+      <!-- ══════════════════════════════════════════
+           TAB 2 — MODIFICA PROFILO
+           Form per aggiornare i dati tramite API PUT /api/users/me
+           ══════════════════════════════════════════ -->
+      <section class="profilo-panel" id="tab-modifica"
+               role="tabpanel" aria-labelledby="tab-btn-modifica">
+
+        <form class="profilo-form" id="form-modifica" novalidate>
+
+          <!-- Campi comuni a entrambi i ruoli -->
+          <div class="form-group">
+            <label for="mod-username">Username</label>
+            <input type="text" id="mod-username" name="username"
+                   placeholder="Il tuo username" autocomplete="username" />
+          </div>
+
+          <div class="form-group">
+            <label for="mod-email">Email</label>
+            <input type="email" id="mod-email" name="email"
+                   placeholder="nome@esempio.it" autocomplete="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="mod-telefono">Telefono</label>
+            <input type="tel" id="mod-telefono" name="telefono"
+                   placeholder="+39 000 000 0000" autocomplete="tel" />
+          </div>
+
+          <!-- Campi visibili solo per il ruolo CLIENTE -->
+          <div class="form-group form-group--cliente" id="grp-indirizzo">
+            <label for="mod-indirizzo">Indirizzo di consegna</label>
+            <input type="text" id="mod-indirizzo" name="indirizzo"
+                   placeholder="Via, numero civico, città" autocomplete="street-address" />
+          </div>
+
+          <!-- Campi visibili solo per il ruolo RISTORATORE -->
+          <div class="form-group form-group--ristoratore" id="grp-nome-ristorante">
+            <label for="mod-nome-ristorante">Nome ristorante</label>
+            <input type="text" id="mod-nome-ristorante" name="nomeRistorante"
+                   placeholder="Es. La Bella Italia" />
+          </div>
+
+          <div class="form-group form-group--ristoratore" id="grp-indirizzo-ristorante">
+            <label for="mod-indirizzo-ristorante">Indirizzo ristorante</label>
+            <input type="text" id="mod-indirizzo-ristorante" name="indirizzoRistorante"
+                   placeholder="Via, numero civico, città" />
+          </div>
+
+          <!-- Separatore: cambio password (opzionale) -->
+          <div class="form-divider">
+            <span>Cambia password <em>(lascia vuoto per non modificarla)</em></span>
+          </div>
+
+          <div class="form-group">
+            <label for="mod-pw-attuale">Password attuale</label>
+            <input type="password" id="mod-pw-attuale" name="passwordAttuale"
+                   placeholder="••••••••" autocomplete="current-password" />
+          </div>
+
+          <div class="form-group">
+            <label for="mod-pw-nuova">Nuova password</label>
+            <input type="password" id="mod-pw-nuova" name="passwordNuova"
+                   placeholder="••••••••" autocomplete="new-password" />
+          </div>
+
+          <div class="form-group">
+            <label for="mod-pw-conferma">Conferma nuova password</label>
+            <input type="password" id="mod-pw-conferma" name="passwordConferma"
+                   placeholder="••••••••" autocomplete="new-password" />
+          </div>
+
+          <!-- Feedback errore / successo -->
+          <p class="form-feedback" id="modifica-feedback" aria-live="polite"></p>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn--accent btn--lg">
+              Salva modifiche
+            </button>
+          </div>
+
+        </form>
+      </section>
+
+
+      <!-- ══════════════════════════════════════════
+           TAB 3 — ELIMINA ACCOUNT
+           Richiede la password per confermare.
+           Chiama API DELETE /api/users/me
+           ══════════════════════════════════════════ -->
+      <section class="profilo-panel" id="tab-elimina"
+               role="tabpanel" aria-labelledby="tab-btn-elimina">
+
+        <div class="danger-box">
+          <div class="danger-box__icon" aria-hidden="true">⚠️</div>
+          <h2 class="danger-box__title">Elimina il tuo account</h2>
+          <p class="danger-box__desc">
+            Questa operazione è <strong>irreversibile</strong>. Tutti i tuoi dati,
+            inclusi ordini e preferenze, verranno rimossi definitivamente.
+          </p>
+
+          <form class="profilo-form" id="form-elimina" novalidate>
+            <div class="form-group">
+              <label for="del-password">Conferma con la tua password</label>
+              <input type="password" id="del-password" name="password"
+                     placeholder="••••••••" autocomplete="current-password" required />
+            </div>
+
+            <p class="form-feedback" id="elimina-feedback" aria-live="polite"></p>
+
+            <div class="form-actions">
+              <!-- Pulsante rosso: elimina definitivamente -->
+              <button type="submit" class="btn btn--delete btn--lg">
+                Elimina definitivamente
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+
+
+  <!-- ============================================
+       FOOTER
+       ============================================ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__inner">
+      <span class="footer__copy">© 2025 FastFood · Progetto PWM UniMI</span>
+      <ul class="footer__links" aria-label="Link footer">
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/termini">Termini</a></li>
+        <li><a href="/contatti">Contatti</a></li>
+      </ul>
+    </div>
+  </footer>
+
+
+  <!-- ============================================
+       SCRIPT
+       ============================================ -->
+  <script>
+    /* ──────────────────────────────────────────────
+       COSTANTI
+       BASE_URL: prefisso per tutte le chiamate API REST.
+       Cambia in produzione con l'URL del server reale.
+    ────────────────────────────────────────────── */
+    const BASE_URL = 'http://localhost:3000/api';
+
+    /* ──────────────────────────────────────────────
+       GUARD DI AUTENTICAZIONE
+       Legge il token JWT salvato in localStorage dopo il login.
+       Se assente, redirige immediatamente a login.html.
+       Il token contiene (decodificato): { id, username, ruolo, ... }
+    ────────────────────────────────────────────── */
+    const token = localStorage.getItem('ff_token');
+    if (!token) {
+      // Utente non loggato: redirect a login con messaggio
+      window.location.href = 'login.html?redirect=profilo';
+    }
+
+    /* ──────────────────────────────────────────────
+       DECODE JWT (senza libreria esterna)
+       Estrae il payload dal token per leggere ruolo e username
+       senza fare una chiamata al server.
+       NOTA: non verifica la firma (lo fa il server ad ogni API call).
+    ────────────────────────────────────────────── */
+    function decodeJWT(token) {
+      try {
+        const payload = token.split('.')[1];
+        // atob decodifica base64; replace gestisce il base64url
+        return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+      } catch {
+        return null;
+      }
+    }
+
+    const payload = decodeJWT(token);
+    if (!payload) {
+      // Token malformato: logout forzato
+      localStorage.removeItem('ff_token');
+      window.location.href = 'login.html';
+    }
+
+    /* ──────────────────────────────────────────────
+       HEADER AUTORIZZAZIONE
+       Oggetto riusabile per tutte le fetch autenticate.
+    ────────────────────────────────────────────── */
+    const authHeaders = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
+    /* ──────────────────────────────────────────────
+       CARICA PROFILO DAL SERVER
+       GET /api/users/me — restituisce i dati aggiornati dell'utente.
+       In attesa della risposta mostra i dati base dal JWT.
+    ────────────────────────────────────────────── */
+    async function caricaProfilo() {
+      // Mostra subito i dati dal JWT (ottimistic UI)
+      renderHeaderProfilo(payload);
+
+      try {
+        const res  = await fetch(`${BASE_URL}/users/me`, { headers: authHeaders });
+        if (!res.ok) throw new Error('Errore nel caricamento del profilo');
+        const utente = await res.json();
+
+        // Aggiorna header e griglia con i dati completi dal DB
+        renderHeaderProfilo(utente);
+        renderInfoGrid(utente);
+        precompilForm(utente);
+
+      } catch (err) {
+        // Se la chiamata fallisce mostriamo comunque i dati dal JWT
+        renderInfoGrid(payload);
+        precompilForm(payload);
+        console.warn('Impossibile caricare profilo dal server:', err.message);
+      }
+
+      // Mostra la pagina (era nascosta per evitare flash di contenuto non autenticato)
+      document.getElementById('profilo-main').style.display = '';
+    }
+
+    /* ──────────────────────────────────────────────
+       RENDER HEADER PROFILO
+       Popola nome e badge ruolo nell'intestazione.
+    ────────────────────────────────────────────── */
+    function renderHeaderProfilo(utente) {
+      document.getElementById('profilo-nome').textContent =
+        utente.username || utente.nome || '—';
+
+      const badge = document.getElementById('profilo-badge');
+      const ruolo = (utente.ruolo || '').toLowerCase();
+      badge.textContent = ruolo === 'ristoratore' ? '🍽️ Ristoratore' : '🧑 Cliente';
+      badge.className   = `profilo-badge profilo-badge--${ruolo}`;
+
+      // Mostra/nasconde i campi specifici per ruolo nel form modifica
+      toggleCampiRuolo(ruolo);
+    }
+
+    /* ──────────────────────────────────────────────
+       RENDER GRIGLIA DATI (Tab 1 — sola lettura)
+       Costruisce dinamicamente le righe in base al ruolo.
+    ────────────────────────────────────────────── */
+    function renderInfoGrid(utente) {
+      const grid  = document.getElementById('info-grid');
+      const ruolo = (utente.ruolo || '').toLowerCase();
+
+      // Campi comuni
+      const campi = [
+        { label: 'Username',  value: utente.username  || '—' },
+        { label: 'Email',     value: utente.email     || '—' },
+        { label: 'Telefono',  value: utente.telefono  || '—' },
+        { label: 'Ruolo',     value: ruolo === 'ristoratore' ? 'Ristoratore' : 'Cliente' },
+      ];
+
+      // Campi aggiuntivi per il cliente
+      if (ruolo === 'cliente') {
+        campi.push({ label: 'Indirizzo di consegna', value: utente.indirizzo || '—' });
+      }
+
+      // Campi aggiuntivi per il ristoratore
+      if (ruolo === 'ristoratore') {
+        campi.push({ label: 'Nome ristorante',     value: utente.nomeRistorante      || '—' });
+        campi.push({ label: 'Indirizzo ristorante', value: utente.indirizzoRistorante || '—' });
+      }
+
+      // Costruisce l'HTML
+      grid.innerHTML = campi.map(c => `
+        <div class="info-row">
+          <span class="info-label">${c.label}</span>
+          <span class="info-value">${c.value}</span>
+        </div>
+      `).join('');
+    }
+
+    /* ──────────────────────────────────────────────
+       PRECOMPILA FORM MODIFICA
+       Inserisce i valori attuali nei campi del form.
+    ────────────────────────────────────────────── */
+    function precompilForm(utente) {
+      document.getElementById('mod-username').value          = utente.username          || '';
+      document.getElementById('mod-email').value             = utente.email             || '';
+      document.getElementById('mod-telefono').value          = utente.telefono          || '';
+      document.getElementById('mod-indirizzo').value         = utente.indirizzo         || '';
+      document.getElementById('mod-nome-ristorante').value   = utente.nomeRistorante    || '';
+      document.getElementById('mod-indirizzo-ristorante').value = utente.indirizzoRistorante || '';
+    }
+
+    /* ──────────────────────────────────────────────
+       TOGGLE CAMPI PER RUOLO
+       Mostra solo i campi pertinenti al ruolo dell'utente.
+    ────────────────────────────────────────────── */
+    function toggleCampiRuolo(ruolo) {
+      // Campi cliente
+      document.querySelectorAll('.form-group--cliente').forEach(el => {
+        el.style.display = ruolo === 'cliente' ? '' : 'none';
+      });
+      // Campi ristoratore
+      document.querySelectorAll('.form-group--ristoratore').forEach(el => {
+        el.style.display = ruolo === 'ristoratore' ? '' : 'none';
+      });
+    }
+
+    /* ──────────────────────────────────────────────
+       FORM MODIFICA — SUBMIT
+       PUT /api/users/me con i dati aggiornati.
+       Invia la password solo se l'utente l'ha compilata.
+    ────────────────────────────────────────────── */
+    document.getElementById('form-modifica').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const feedback = document.getElementById('modifica-feedback');
+      feedback.textContent = '';
+      feedback.className   = 'form-feedback';
+
+      // Raccoglie i dati dal form
+      const body = {
+        username:  document.getElementById('mod-username').value.trim(),
+        email:     document.getElementById('mod-email').value.trim(),
+        telefono:  document.getElementById('mod-telefono').value.trim(),
+      };
+
+      // Aggiunge campi ruolo-specifici
+      const ruolo = (payload.ruolo || '').toLowerCase();
+      if (ruolo === 'cliente') {
+        body.indirizzo = document.getElementById('mod-indirizzo').value.trim();
+      }
+      if (ruolo === 'ristoratore') {
+        body.nomeRistorante       = document.getElementById('mod-nome-ristorante').value.trim();
+        body.indirizzoRistorante  = document.getElementById('mod-indirizzo-ristorante').value.trim();
+      }
+
+      // Aggiunge password solo se compilata
+      const pwAttuale  = document.getElementById('mod-pw-attuale').value;
+      const pwNuova    = document.getElementById('mod-pw-nuova').value;
+      const pwConferma = document.getElementById('mod-pw-conferma').value;
+
+      if (pwNuova) {
+        if (pwNuova !== pwConferma) {
+          feedback.textContent = 'Le nuove password non coincidono.';
+          feedback.classList.add('form-feedback--error');
+          return;
+        }
+        body.passwordAttuale = pwAttuale;
+        body.passwordNuova   = pwNuova;
+      }
+
+      try {
+        const res = await fetch(`${BASE_URL}/users/me`, {
+          method:  'PUT',
+          headers: authHeaders,
+          body:    JSON.stringify(body),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Errore durante la modifica');
+
+        feedback.textContent = '✓ Profilo aggiornato con successo.';
+        feedback.classList.add('form-feedback--success');
+        // Aggiorna la vista con i nuovi dati
+        renderHeaderProfilo(data);
+        renderInfoGrid(data);
+
+      } catch (err) {
+        feedback.textContent = err.message;
+        feedback.classList.add('form-feedback--error');
+      }
+    });
+
+    /* ──────────────────────────────────────────────
+       FORM ELIMINA — SUBMIT
+       DELETE /api/users/me con conferma password.
+       In caso di successo: rimuove il token e redirige al login.
+    ────────────────────────────────────────────── */
+    document.getElementById('form-elimina').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const feedback = document.getElementById('elimina-feedback');
+      feedback.textContent = '';
+      feedback.className   = 'form-feedback';
+
+      const password = document.getElementById('del-password').value;
+      if (!password) {
+        feedback.textContent = 'Inserisci la password per confermare.';
+        feedback.classList.add('form-feedback--error');
+        return;
+      }
+
+      // Doppia conferma prima di eliminare
+      if (!confirm('Sei sicuro? Questa operazione non può essere annullata.')) return;
+
+      try {
+        const res = await fetch(`${BASE_URL}/users/me`, {
+          method:  'DELETE',
+          headers: authHeaders,
+          body:    JSON.stringify({ password }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.message || 'Errore durante l\'eliminazione');
+        }
+
+        // Account eliminato: pulisce localStorage e redirige
+        localStorage.removeItem('ff_token');
+        window.location.href = 'login.html?deleted=1';
+
+      } catch (err) {
+        feedback.textContent = err.message;
+        feedback.classList.add('form-feedback--error');
+      }
+    });
+
+    /* ──────────────────────────────────────────────
+       LOGOUT
+       Rimuove il token e redirige al login.
+    ────────────────────────────────────────────── */
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      localStorage.removeItem('ff_token');
+      window.location.href = 'login.html';
+    });
+
+    /* ──────────────────────────────────────────────
+       TAB NAVIGATION
+       Gestisce la visibilità dei pannelli tramite
+       le classi CSS "active".
+    ────────────────────────────────────────────── */
+    document.querySelectorAll('.profilo-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Rimuove active da tutti i tab e panel
+        document.querySelectorAll('.profilo-tab').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        document.querySelectorAll('.profilo-panel').forEach(p => {
+          p.classList.remove('active');
+        });
+
+        // Attiva il tab cliccato e il suo panel
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        document.getElementById(btn.getAttribute('aria-controls')).classList.add('active');
+      });
+    });
+
+    /* ──────────────────────────────────────────────
+       AVVIO
+       Carica il profilo dopo che il DOM è pronto.
+    ────────────────────────────────────────────── */
+    caricaProfilo();
+  </script>
+
+</body>
+</html>

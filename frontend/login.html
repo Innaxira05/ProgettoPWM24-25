@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastFood — Accedi o Registrati</title>
+  <meta name="description" content="Accedi o crea un account FastFood per ordinare i tuoi piatti preferiti." />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Stili specifici della pagina login/register -->
+  <style>
+    /* ---- Layout pagina ---- */
+    .auth-page {
+      min-height: 100svh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      padding-top: 68px;
+    }
+
+    /* ---- Pannello visivo (sinistra) ---- */
+    .auth-visual {
+      background: var(--clr-surface);
+      border-right: 1px solid var(--clr-border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      padding: 4rem 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-visual::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(244,161,0,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .auth-visual__emoji {
+      font-size: 6rem;
+      animation: float 5s ease-in-out infinite;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-visual__title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 4vw, 4rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 0.95;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-visual__title span { color: var(--clr-accent); }
+
+    .auth-visual__desc {
+      font-size: 0.9rem;
+      color: var(--clr-muted);
+      text-align: center;
+      max-width: 300px;
+      font-weight: 300;
+      position: relative;
+      z-index: 1;
+    }
+
+    .auth-visual__perks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .perk {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--clr-muted);
+    }
+
+    .perk__icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: rgba(244,161,0,0.08);
+      border: 1px solid rgba(244,161,0,0.15);
+      display: grid;
+      place-items: center;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+
+    /* ---- Pannello form (destra) ---- */
+    .auth-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+      overflow-y: auto;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* ---- Tab switcher ---- */
+    .auth-tabs {
+      display: flex;
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      margin-bottom: 2rem;
+      background: var(--clr-surface);
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-pill);
+      border: none;
+      background: transparent;
+      color: var(--clr-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    .auth-tab.active {
+      background: var(--clr-accent);
+      color: #0d0d0d;
+      font-weight: 700;
+    }
+
+    /* ---- Sezione form ---- */
+    .auth-section {
+      display: none;
+    }
+
+    .auth-section.active {
+      display: block;
+      animation: fade-up 0.35s ease both;
+    }
+
+    .auth-section__title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .auth-section__title span { color: var(--clr-accent); }
+
+    .auth-section__sub {
+      font-size: 0.85rem;
+      color: var(--clr-muted);
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    /* ---- Campi form ---- */
+    .field {
+      margin-bottom: 1.1rem;
+    }
+
+    .field label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--clr-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      background: var(--clr-surface);
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      padding: 0.7rem 0.9rem;
+      color: var(--clr-text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--clr-accent);
+      box-shadow: 0 0 0 3px rgba(244,161,0,0.12);
+    }
+
+    .field input::placeholder { color: var(--clr-muted); }
+
+    /* Select custom arrow */
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7670' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.9rem center;
+      padding-right: 2.5rem;
+      cursor: pointer;
+    }
+
+    .field select option {
+      background: var(--clr-surface);
+      color: var(--clr-text);
+    }
+
+    /* Messaggio errore campo */
+    .field__error {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      color: var(--clr-accent-2);
+      letter-spacing: 0.05em;
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    .field.invalid .field__error { display: block; }
+    .field.invalid input,
+    .field.invalid select {
+      border-color: var(--clr-accent-2);
+      box-shadow: 0 0 0 3px rgba(230,57,70,0.1);
+    }
+
+    /* Role cards (register) */
+    .role-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .role-card {
+      border: 1px solid var(--clr-border);
+      border-radius: var(--radius-sm);
+      padding: 0.9rem;
+      cursor: pointer;
+      transition: border-color var(--transition), background var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .role-card:hover { border-color: rgba(244,161,0,0.4); }
+
+    .role-card.selected {
+      border-color: var(--clr-accent);
+      background: rgba(244,161,0,0.06);
+    }
+
+    .role-card__icon { font-size: 1.4rem; }
+
+    .role-card__label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .role-card__desc {
+      font-size: 0.75rem;
+      color: var(--clr-muted);
+      font-weight: 300;
+      line-height: 1.4;
+    }
+
+    /* Hidden radio */
+    .role-card input[type="radio"] { display: none; }
+
+    /* Submit button */
+    .btn--full {
+      width: 100%;
+      justify-content: center;
+      padding: 0.8rem 1.5rem;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Divider */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-block: 1.25rem;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--clr-border);
+    }
+
+    .auth-divider span {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.08em;
+      color: var(--clr-muted);
+      text-transform: uppercase;
+    }
+
+    /* Alert feedback */
+    .auth-alert {
+      display: none;
+      padding: 0.7rem 1rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      margin-bottom: 1rem;
+    }
+
+    .auth-alert.success {
+      display: block;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.25);
+      color: #22c55e;
+    }
+
+    .auth-alert.error {
+      display: block;
+      background: rgba(230,57,70,0.08);
+      border: 1px solid rgba(230,57,70,0.25);
+      color: var(--clr-accent-2);
+    }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      .auth-page { grid-template-columns: 1fr; }
+      .auth-visual { display: none; }
+      .auth-panel { padding: 2rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR Semplificata per schermate secondarie-->
+  <header class="navbar" id="navbar" role="banner">
+    
+    <a class="navbar__logo" href="index.html" aria-label="FastFood Home">
+      <div class="navbar__logo-icon" aria-hidden="true">🍔</div>
+      <span class="navbar__logo-wordmark">Fast<span>Food</span></span>
+    </a>
+
+    <div class="navbar__actions">
+      <a href="index.html" class="btn btn--ghost">Torna alla Home</a>
+    </div>
+
+  </header>
+
+  <!-- ============================================
+       MAIN — split layout
+       ============================================ -->
+  <main class="auth-page">
+
+    <!-- Pannello visivo (sinistra) -->
+    <aside class="auth-visual" aria-hidden="true">
+      <div class="auth-visual__emoji">🍔</div>
+      <h2 class="auth-visual__title">Il gusto<br>a <span>portata</span><br>di click</h2>
+      <p class="auth-visual__desc">
+        Ordina dai migliori ristoranti della tua città in pochi secondi.
+      </p>
+      <ul class="auth-visual__perks">
+        <li class="perk">
+          <span class="perk__icon">🚀</span>
+          Consegna rapida a domicilio
+        </li>
+        <li class="perk">
+          <span class="perk__icon">🔍</span>
+          Cerca per ingrediente o allergia
+        </li>
+        <li class="perk">
+          <span class="perk__icon">📦</span>
+          Traccia i tuoi ordini in tempo reale
+        </li>
+        <li class="perk">
+          <span class="perk__icon">⭐</span>
+          Offerte personalizzate per te
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Pannello form (destra) -->
+    <section class="auth-panel" aria-label="Autenticazione">
+      <div class="auth-box">
+
+        <!-- Tab switcher -->
+        <div class="auth-tabs" role="tablist" aria-label="Scegli azione">
+          <button class="auth-tab active" id="tab-login" role="tab" aria-selected="true" aria-controls="login-section">
+            Accedi
+          </button>
+          <button class="auth-tab" id="tab-register" role="tab" aria-selected="false" aria-controls="register-section">
+            Registrati
+          </button>
+        </div>
+
+        <!-- ---- LOGIN ---- -->
+        <div class="auth-section active" id="login-section" role="tabpanel" aria-labelledby="tab-login">
+          <h1 class="auth-section__title">Bentornato <span>·</span></h1>
+          <p class="auth-section__sub">Inserisci le tue credenziali per accedere.</p>
+
+          <div class="auth-alert" id="login-alert" role="alert"></div>
+
+          <form id="login-form" novalidate>
+            <div class="field" id="field-login-username">
+              <label for="login-username">Username</label>
+              <input type="text" id="login-username" name="username" placeholder="Il tuo username" autocomplete="username" required />
+              <p class="field__error">Username obbligatorio.</p>
+            </div>
+
+            <div class="field" id="field-login-password">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" name="password" placeholder="••••••••" autocomplete="current-password" required />
+              <p class="field__error">Password obbligatoria.</p>
+            </div>
+
+            <button type="submit" class="btn btn--accent btn--full">Accedi →</button>
+          </form>
+
+          <div class="auth-divider"><span>oppure</span></div>
+
+          <p style="font-size: 0.83rem; color: var(--clr-muted); text-align: center;">
+            Non hai un account?
+            <button class="btn btn--ghost" style="padding: 0.3rem 0.75rem; font-size: 0.72rem; margin-left: 0.3rem;" id="go-register">
+              Registrati
+            </button>
+          </p>
+        </div>
+
+        <!-- ---- REGISTER ---- -->
+        <div class="auth-section" id="register-section" role="tabpanel" aria-labelledby="tab-register">
+          <h1 class="auth-section__title">Crea <span>account</span></h1>
+          <p class="auth-section__sub">Unisciti a FastFood. È gratis.</p>
+
+          <div class="auth-alert" id="register-alert" role="alert"></div>
+
+          <form id="register-form" novalidate>
+
+            <!-- Tipologia utente -->
+            <div class="role-cards" role="radiogroup" aria-label="Tipo di account">
+              <label class="role-card selected" id="card-customer">
+                <input type="radio" name="role" value="customer" checked />
+                <span class="role-card__icon">🧑</span>
+                <span class="role-card__label">Cliente</span>
+                <span class="role-card__desc">Ordina piatti dai ristoranti.</span>
+              </label>
+              <label class="role-card" id="card-restaurateur">
+                <input type="radio" name="role" value="restaurateur" />
+                <span class="role-card__icon">🍳</span>
+                <span class="role-card__label">Ristoratore</span>
+                <span class="role-card__desc">Gestisci il tuo ristorante.</span>
+              </label>
+            </div>
+
+            <div class="field" id="field-reg-username">
+              <label for="reg-username">Username</label>
+              <input type="text" id="reg-username" name="username" placeholder="Scegli uno username" autocomplete="username" required />
+              <p class="field__error">Username obbligatorio.</p>
+            </div>
+
+            <div class="field" id="field-reg-email">
+              <label for="reg-email">Email</label>
+              <input type="email" id="reg-email" name="email" placeholder="nome@esempio.com" autocomplete="email" required />
+              <p class="field__error">Email non valida.</p>
+            </div>
+
+            <div class="field" id="field-reg-password">
+              <label for="reg-password">Password</label>
+              <input type="password" id="reg-password" name="password" placeholder="Min. 8 caratteri" autocomplete="new-password" required minlength="8" />
+              <p class="field__error">La password deve avere almeno 8 caratteri.</p>
+            </div>
+
+            <!-- Campi aggiuntivi ristoratore (visibili solo se selezionato) -->
+            <div id="restaurateur-fields" style="display:none;">
+              <div class="field">
+                <label for="reg-restaurant-name">Nome ristorante</label>
+                <input type="text" id="reg-restaurant-name" name="restaurantName" placeholder="Es. Burger Palace" />
+              </div>
+              <div class="field">
+                <label for="reg-piva">Partita IVA</label>
+                <input type="text" id="reg-piva" name="piva" placeholder="12345678901" maxlength="11" />
+              </div>
+              <div class="field">
+                <label for="reg-address">Indirizzo ristorante</label>
+                <input type="text" id="reg-address" name="address" placeholder="Via Roma 1, Milano" />
+              </div>
+              <div class="field">
+                <label for="reg-phone">Telefono</label>
+                <input type="tel" id="reg-phone" name="phone" placeholder="+39 02 1234567" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn--accent btn--full">Crea account →</button>
+          </form>
+
+          <div class="auth-divider"><span>hai già un account?</span></div>
+          <p style="font-size: 0.83rem; color: var(--clr-muted); text-align: center;">
+            <button class="btn btn--ghost" style="padding: 0.3rem 0.75rem; font-size: 0.72rem;" id="go-login">
+              Accedi
+            </button>
+          </p>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+
+  <!-- ============================================
+       SCRIPT
+       ============================================ -->
+  <script>
+    /* ---------- Tab switching ---------- */
+    const tabLogin    = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const secLogin    = document.getElementById('login-section');
+    const secRegister = document.getElementById('register-section');
+
+    function showLogin() {
+      tabLogin.classList.add('active');
+      tabRegister.classList.remove('active');
+      tabLogin.setAttribute('aria-selected', 'true');
+      tabRegister.setAttribute('aria-selected', 'false');
+      secLogin.classList.add('active');
+      secRegister.classList.remove('active');
+    }
+
+    function showRegister() {
+      tabRegister.classList.add('active');
+      tabLogin.classList.remove('active');
+      tabRegister.setAttribute('aria-selected', 'true');
+      tabLogin.setAttribute('aria-selected', 'false');
+      secRegister.classList.add('active');
+      secLogin.classList.remove('active');
+    }
+
+    tabLogin.addEventListener('click', showLogin);
+    tabRegister.addEventListener('click', showRegister);
+    document.getElementById('go-register').addEventListener('click', showRegister);
+    document.getElementById('go-login').addEventListener('click', showLogin);
+
+    /* ---------- Role card toggle ---------- */
+    const cardCustomer     = document.getElementById('card-customer');
+    const cardRestaurateur = document.getElementById('card-restaurateur');
+    const restaurateurFields = document.getElementById('restaurateur-fields');
+
+    [cardCustomer, cardRestaurateur].forEach(card => {
+      card.addEventListener('click', () => {
+        cardCustomer.classList.remove('selected');
+        cardRestaurateur.classList.remove('selected');
+        card.classList.add('selected');
+        const isRestaurateur = card.id === 'card-restaurateur';
+        restaurateurFields.style.display = isRestaurateur ? 'block' : 'none';
+      });
+    });
+
+    /* ---------- Alert helpers ---------- */
+    function showAlert(id, message, type) {
+      const el = document.getElementById(id);
+      el.textContent = message;
+      el.className = 'auth-alert ' + type;
+    }
+
+    function hideAlert(id) {
+      document.getElementById(id).className = 'auth-alert';
+    }
+
+    /* ---------- Validazione campo singolo ---------- */
+    function validateField(fieldWrapId, inputEl) {
+      const wrapper = document.getElementById(fieldWrapId);
+      let valid = true;
+
+      if (inputEl.type === 'email') {
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputEl.value.trim());
+      } else if (inputEl.minLength > 0) {
+        valid = inputEl.value.trim().length >= inputEl.minLength;
+      } else {
+        valid = inputEl.value.trim().length > 0;
+      }
+
+      wrapper.classList.toggle('invalid', !valid);
+      return valid;
+    }
+
+    /* ---------- Form LOGIN ---------- */
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert('login-alert');
+
+      const usernameEl = document.getElementById('login-username');
+      const passwordEl = document.getElementById('login-password');
+      const v1 = validateField('field-login-username', usernameEl);
+      const v2 = validateField('field-login-password', passwordEl);
+      if (!v1 || !v2) return;
+
+      const payload = {
+        username: usernameEl.value.trim(),
+        password: passwordEl.value
+      };
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showAlert('login-alert', '✓ Accesso effettuato! Reindirizzamento…', 'success');
+          // Salva token se il backend lo restituisce
+          if (data.token) localStorage.setItem('ff_token', data.token);
+          setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+        } else {
+          showAlert('login-alert', data.message || 'Credenziali non valide.', 'error');
+        }
+      } catch {
+        showAlert('login-alert', 'Errore di rete. Riprova più tardi.', 'error');
+      }
+    });
+
+    /* ---------- Form REGISTER ---------- */
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert('register-alert');
+
+      const usernameEl = document.getElementById('reg-username');
+      const emailEl    = document.getElementById('reg-email');
+      const passwordEl = document.getElementById('reg-password');
+      const role       = document.querySelector('input[name="role"]:checked').value;
+
+      const v1 = validateField('field-reg-username', usernameEl);
+      const v2 = validateField('field-reg-email', emailEl);
+      const v3 = validateField('field-reg-password', passwordEl);
+      if (!v1 || !v2 || !v3) return;
+
+      const payload = {
+        username: usernameEl.value.trim(),
+        email:    emailEl.value.trim(),
+        password: passwordEl.value,
+        role
+      };
+
+      // Campi extra ristoratore
+      if (role === 'restaurateur') {
+        payload.restaurantName = document.getElementById('reg-restaurant-name').value.trim();
+        payload.piva           = document.getElementById('reg-piva').value.trim();
+        payload.address        = document.getElementById('reg-address').value.trim();
+        payload.phone          = document.getElementById('reg-phone').value.trim();
+      }
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          showAlert('register-alert', '✓ Account creato! Ora puoi accedere.', 'success');
+          setTimeout(showLogin, 1500);
+        } else {
+          showAlert('register-alert', data.message || 'Registrazione fallita.', 'error');
+        }
+      } catch {
+        showAlert('register-alert', 'Errore di rete. Riprova più tardi.', 'error');
+      }
+    });
+
+    /* Controlla se arrivare direttamente sulla tab registro (es. ?mode=register) */
+    if (new URLSearchParams(window.location.search).get('mode') === 'register') {
+      showRegister();
+    }
+  </script>
+
+</body>
+</html>
