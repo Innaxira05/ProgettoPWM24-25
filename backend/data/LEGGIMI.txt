@@ -1,0 +1,3 @@
+Inserisci qui il file JSON fornito dal professore: meals_1.json
+Al primo avvio del server, se il catalogo piatti e' vuoto, viene caricato automaticamente.
+Per ricaricarlo a mano: npm run seed
